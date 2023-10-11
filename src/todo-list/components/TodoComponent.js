@@ -1,13 +1,15 @@
+import todoService from "../TodoService.js";
+
 export class TodoComponent extends HTMLElement {
 
     /**
      * Todo component constructor.
-     * @param {object} todo 
+     * @param {Todo} todo 
      */
     constructor(todo) {
         super();
         this.todo = todo;
-        this.innerHTML = this.render(todo);
+        this.render(todo);
     }
 
     /**
@@ -21,19 +23,41 @@ export class TodoComponent extends HTMLElement {
      * Attach event handlers.
      */
     attachHandlers() {
-
+        this.querySelector('[data-action="delete"]').addEventListener('click', this.removeTodo.bind(this));
+        this.querySelector('[type="checkbox"]').addEventListener('change', this.checkTodo.bind(this));
     }
 
     /**
-     * Return the content to render in the component.
-     * @returns {string} Content to render
+     * Check todo.
+     * @param {Event} e 
+     */
+    checkTodo(e) {
+        todoService.updateCompletion(this.todo.created_at, e.currentTarget.checked);
+    }
+
+    /**
+     * Remove a todo
+     */
+    removeTodo() {
+        todoService.remove(this.todo.created_at);
+        this.remove();
+    }
+
+    /**
+     * Initial component render.
      */
     render(todo) {
-        return `
-            <input type="checkbox" ${todo.done ? 'checked' : ''}>
-            <p>${todo.desc}</p>
-            <button data-action="modify">Modifier</button>
-            <button data-action="delete">X</button>
+        this.innerHTML = `
+            <section class='todo'>
+                <label>
+                    <input type="checkbox" ${todo.done ? 'checked' : ''}>
+                    ${todo.desc}
+                </label>
+                <div class='todo__buttons'>
+                    <button data-action="modify">Modifier</button>
+                    <button data-action="delete">X</button>
+                </div>
+            </section>
         `;
     }
 }

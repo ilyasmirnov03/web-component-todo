@@ -1,4 +1,5 @@
-import { Todo } from "./components/TodoComponent.js";
+import todoService from "./TodoService.js";
+import { TodoComponent } from "./components/TodoComponent.js";
 
 export class TodoList extends HTMLElement {
 
@@ -7,9 +8,14 @@ export class TodoList extends HTMLElement {
      */
     constructor() {
         super();
-        this.todos = this.getTodos();
-        this.$todosContainer = document.querySelector('.todos-container');
-        console.log('todos list after init', this.todos);
+        this.todos = todoService.todos;
+        todoService.subscribe((event, data) => {
+            this.todos = todoService.todos;
+            if (event === 'add') {
+                this.appendNewTodo(data);
+            }
+            console.log('todos list after init ', event, this.todos);
+        });
     }
 
     /**
@@ -17,26 +23,41 @@ export class TodoList extends HTMLElement {
      */
     connectedCallback() {
         this.render();
-        this.renderTodos();
+        this.attachHandlers();
     }
 
     /**
      * Attach event handlers.
      */
     attachHandlers() {
+        // Todo add event
+    }
 
+
+    /**
+     * Append new todo to the todo list.
+     * @param {Todo} todo Data from new submitted todo.
+     */
+    appendNewTodo(todo) {
+        if (this.todos.length === 0) {
+            this.$todosContainer.innerHTML = '';
+        }
+        this.$todosContainer.appendChild(new TodoComponent(todo));
     }
 
     /**
      * Initial render of the component.
+     * Also initializes selected elements into variables.
      */
     render() {
         this.innerHTML = `
             <todo-add></todo-add>
-            <div class='todos-container'>
+            <div class='todo__container'>
                 ${this.todos.length === 0 ? 'No todos have been added.' : ''}
             </div>
         `;
+        this.$todosContainer = document.querySelector('.todo__container');
+        this.renderTodos();
     }
 
     /**
@@ -44,22 +65,8 @@ export class TodoList extends HTMLElement {
      */
     renderTodos() {
         this.todos.forEach(todo => {
-            this.$todosContainer.appendChild(new Todo(todo));
+            this.$todosContainer.appendChild(new TodoComponent(todo));
         });
-    }
-
-    /**
-     * Return the saved todo list.
-     * If none were found, creates new list and saves it in local storage.
-     * @returns object[]
-     */
-    getTodos() {
-        const savedTodos = JSON.parse(localStorage.getItem('todos'));
-        if (savedTodos == null) {
-            localStorage.setItem('todos', JSON.stringify([]));
-            return [];
-        }
-        return savedTodos;
     }
 }
 customElements.define('todo-list', TodoList);

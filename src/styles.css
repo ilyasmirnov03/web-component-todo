@@ -1,0 +1,16 @@
+.todo__container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.todo {
+    display: flex;
+    justify-content: space-between;
+}
+
+.todo__buttons {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}

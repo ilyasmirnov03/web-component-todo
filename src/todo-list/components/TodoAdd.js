@@ -1,3 +1,5 @@
+import todoService from "../TodoService.js";
+
 export class TodoAdd extends HTMLElement {
 
     /**
@@ -5,7 +7,6 @@ export class TodoAdd extends HTMLElement {
      */
     constructor() {
         super();
-        window.addEvent = new Event("todo:add");
     }
 
     /**
@@ -43,8 +44,12 @@ export class TodoAdd extends HTMLElement {
     addTodo(e) {
         e.preventDefault();
         const data = new FormData(this.$form);
-        console.log(data);
-        window.dispatchEvent(window.addEvent);
+
+        todoService.add({
+            desc: data.get('description'),
+            done: false,
+            created_at: Date.now()
+        });
     }
 }
 customElements.define('todo-add', TodoAdd);
