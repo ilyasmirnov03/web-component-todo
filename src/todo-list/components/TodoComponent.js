@@ -35,6 +35,7 @@ export class TodoComponent extends HTMLElement {
      */
     checkTodo(e) {
         todoService.updateCompletion(this.todo.created_at, e.currentTarget.checked);
+        this.classList.toggle('completed', e.currentTarget.checked);
     }
 
     /**
@@ -56,6 +57,7 @@ export class TodoComponent extends HTMLElement {
      * Initial component render.
      */
     render(todo) {
+        this.classList.toggle('completed', this.todo.done);
         this.innerHTML = `
             <section class='todo'>
                 <label>
@@ -63,8 +65,8 @@ export class TodoComponent extends HTMLElement {
                     ${todo.desc}
                 </label>
                 <div class='todo__buttons'>
-                    <button data-action="modify">Modifier</button>
-                    <button data-action="delete">X</button>
+                    <button class="btn" data-action="modify">Modifier</button>
+                    <button class="btn" data-action="delete">X</button>
                 </div>
             </section>
         `;

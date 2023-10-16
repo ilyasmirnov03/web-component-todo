@@ -31,7 +31,7 @@ export class TodoAdd extends HTMLElement {
         this.innerHTML = `
             <form>
                 <input name="description" placeholder="Todo description"/>
-                <input type="submit"/>            
+                <input class="btn" type="submit"/>
             </form>
         `;
         this.$form = this.querySelector('form');

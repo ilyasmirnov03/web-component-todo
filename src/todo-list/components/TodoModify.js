@@ -31,6 +31,7 @@ export class TodoModify extends HTMLElement {
     */
     attachHandlers() {
         this.$form.addEventListener('submit', this.updateTodo.bind(this));
+        this.$cancel.addEventListener('click', this.stopUpdate.bind(this));
     }
 
     /**
@@ -46,12 +47,26 @@ export class TodoModify extends HTMLElement {
                     <input type="text" name="description" value="${todo.desc}" />
                 </label>
                 <div class='todo__buttons'>
-                    <input type="submit"/>
-                    <button data-action="delete" type="button">X</button>
+                    <input class="btn" type="submit"/>
+                    <button class="btn" data-action="delete" type="button">X</button>
+                    <button class="btn" data-action="cancel" type="button">Cancel</button>
                 </div>
             </form>
         `;
         this.$form = this.querySelector('form');
+        this.$delete = this.querySelector('[data-action=delete]');
+        this.$cancel = this.querySelector('[data-action=cancel]');
+    }
+
+    /**
+     * Cancel updating by replacing this component with TodoComponent
+     * @param {Todo | undefined} todo 
+     */
+    stopUpdate(todo = undefined) {
+        if (todo instanceof MouseEvent) {
+            todo = this.todo;
+        }
+        this.replaceWith(new TodoComponent(todo));
     }
 
     /**
@@ -68,7 +83,7 @@ export class TodoModify extends HTMLElement {
         }
         todoService.update(updatedTodo);
         // Replace the component with updated todo component
-        this.replaceWith(new TodoComponent(updatedTodo));
+        this.stopUpdate(updatedTodo);
     }
 }
 customElements.define('todo-modify', TodoModify);
