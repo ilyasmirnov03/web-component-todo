@@ -1,4 +1,5 @@
 import todoService from "../TodoService.js";
+import { TodoModify } from "./TodoModify.js";
 
 export class TodoComponent extends HTMLElement {
 
@@ -24,6 +25,7 @@ export class TodoComponent extends HTMLElement {
      */
     attachHandlers() {
         this.querySelector('[data-action="delete"]').addEventListener('click', this.removeTodo.bind(this));
+        this.querySelector('[data-action="modify"]').addEventListener('click', this.toggleUpdate.bind(this));
         this.querySelector('[type="checkbox"]').addEventListener('change', this.checkTodo.bind(this));
     }
 
@@ -33,6 +35,13 @@ export class TodoComponent extends HTMLElement {
      */
     checkTodo(e) {
         todoService.updateCompletion(this.todo.created_at, e.currentTarget.checked);
+    }
+
+    /**
+     * Replaces this component with TodoModify
+     */
+    toggleUpdate() {
+        this.replaceWith(new TodoModify(this.todo));
     }
 
     /**

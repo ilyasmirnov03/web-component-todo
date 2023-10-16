@@ -36,6 +36,7 @@ class TodoService {
      * @private
      */
     updateSubscribers(event, data) {
+        this.updateLocalStorage();
         this.subscribers.forEach(subscriber => subscriber(event, data));
     }
 
@@ -68,7 +69,6 @@ class TodoService {
     add(todo) {
         this.todos.push(todo);
         this.updateSubscribers('add', todo);
-        this.updateLocalStorage();
     }
 
     /**
@@ -80,7 +80,6 @@ class TodoService {
         const index = this.todos.findIndex(todo => id === todo.created_at);
         this.todos.splice(index, 1);
         this.updateSubscribers('remove');
-        this.updateLocalStorage();
     }
 
     /**
@@ -93,7 +92,16 @@ class TodoService {
         const index = this.todos.findIndex(todo => id === todo.created_at);
         this.todos[index].done = status;
         this.updateSubscribers('updateCompletion');
-        this.updateLocalStorage();
+    }
+
+    /**
+     * Update the todo.
+     * @param {Todo} todo 
+     */
+    update(todoToUpdate) {
+        const index = this.todos.findIndex(todo => todoToUpdate.created_at === todo.created_at);
+        this.todos[index] = todoToUpdate;
+        this.updateSubscribers('update');
     }
 }
 
